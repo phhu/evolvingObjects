@@ -15,50 +15,155 @@
     <script src="cannonjs/libs/Detector.js"></script>
     <script src="cannonjs/libs/Stats.js"></script>
     <script src="cannonjs/libs/smoothie.js"></script>
+	<script src="genetic-js-master/lib/genetic.js"></script>
+	<script src="synaptic-master/dist/synaptic.min.js""></script>
     <script>
 
       var demo = new CANNON.Demo();
 		var con,c;
 		// Sphere chain
+
+      demo.addScene("Columns 1",function(){
 		var constraints = [], boxes = [], cells = [],boxConstraints=[];
-      demo.addScene("Sphere chain2",function(){
-        var size = 0.45;
-        var dist = size*1+0.3;
+        var dist = 1*1+0.3;
         var world = setupWorld(demo);
+		world.solver.iterations = 10;
+		
         //world.solver.setSpookParams(1e20,3);
+		//boxes.push( addShape({type:'box',world:world,mass:0,x:-5,z:3}) );
+		//boxes.push( addShape({type:'box',world:world,mass:0,x:5, z:3}) );
+		for (var j = 0 ; j < 10; j ++){
+			var p = [];
+			cells.push(p);
+			var size = 5;
+			for (var i =0 ; i<j*2;i=i+1){
+				//cells.push( addShape({type:'sphere',world:world,mass:1,size:0.35,x:x,z:1}));
+				p.push( addShape({type:'cylinder',world:world,mass:(100),radius:0.3,size:size,x:j*4,z:(i*size)+(size/2)}));
+			}
+			linkCells(world,p,constraints,function(prev,cur){
+				return new CANNON.LockConstraint(prev,cur);
+			});
+		}
+		//}
+		// add constraints
+		//world.addConstraint(c = new CANNON.DistanceConstraint(cells[2],cells[3],dist));
+        //consts.push(c);
 		
+
 		
+		//world.addConstraint(c = new CANNON.DistanceConstraint(boxes[0],cells[0],1.5));
+		//world.addConstraint(c = new CANNON.LockConstraint(boxes[0],cells[0]));
+		//world.addConstraint(c = new CANNON.DistanceConstraint(boxes[1],cells[cells.length-1],1.5));
+		//world.addConstraint(c = new CANNON.LockConstraint(boxes[1],cells[cells.length-1]));
 		
-		var lastBody = null; var b;
-		boxes.push( addShape({type:'box',world:world,mass:0,x:-5}) );
-		boxes.push( addShape({type:'box',world:world,mass:0,x:5}) );
-		for (var x =-3 ; x<4;x=x+0.5){
-			cells.push( addShape({type:'sphere',world:world,mass:1,size:0.35,x:x,z:1}));
+		var boxMass = 10000;
+		//addShape({type:'box',world:world,x:0,z:95,  mass:boxMass, size:1.5});
+		//addShape({type:'box',world:world,x:-2,z:10,  mass:boxMass, size:1.5});
+		
+		//addConstraintRemover(world,constraints,0.7);
+		
+
+		/*addShape({type:'tetra',world:world,x:-0.1});
+		addShape({type:'sphere',world:world,x:2});
+		addShape({type:'sphere',world:world,x:4});
+		addShape({type:'box',world:world,x:6});  */
+	  });		
+		
+      demo.addScene("Bridge 2",function(){
+		var constraints = [], boxes = [], cells = [],boxConstraints=[];
+        var dist = 1*1+0.3;
+        var world = setupWorld(demo);
+		world.solver.iterations = 30;
+		
+        //world.solver.setSpookParams(1e20,3);
+		boxes.push( addShape({type:'box',world:world,mass:0,x:-5,z:1}) );
+		boxes.push( addShape({type:'box',world:world,mass:0,x:5, z:1}) );
+		for (var x =-3.5 ; x<4;x=x+0.5){
+			//cells.push( addShape({type:'sphere',world:world,mass:1,size:0.35,x:x,z:1}));
+			cells.push( addShape({type:'sphere',world:world,mass:1,radius:0.3,size:0.3,x:x,z:2}));
 		}
 		// add constraints
 		//world.addConstraint(c = new CANNON.DistanceConstraint(cells[2],cells[3],dist));
         //consts.push(c);
 		
-		cells.reduce(function(prev,cur,index){
-			console.log(cur);
+		linkCells(world,cells,constraints,function(prev,cur){
+			return new CANNON.LockConstraint(prev,cur);
+		});
+		
+		//world.addConstraint(c = new CANNON.DistanceConstraint(boxes[0],cells[0],1.5));
+		world.addConstraint(c = new CANNON.LockConstraint(boxes[0],cells[0]));
+		//world.addConstraint(c = new CANNON.DistanceConstraint(boxes[1],cells[cells.length-1],1.5));
+		world.addConstraint(c = new CANNON.LockConstraint(boxes[1],cells[cells.length-1]));
+		
+		var boxMass = 1000000;
+		addShape({type:'box',world:world,x:2,z:10,  mass:boxMass, size:1.5});
+		addShape({type:'box',world:world,x:-2,z:10,  mass:boxMass, size:1.5});
+		
+		addConstraintRemover(world,constraints,1.0);
+		
+
+		/*addShape({type:'tetra',world:world,x:-0.1});
+		addShape({type:'sphere',world:world,x:2});
+		addShape({type:'sphere',world:world,x:4});
+		addShape({type:'box',world:world,x:6});  */
+	  });
+		
+      demo.addScene("Bridge 1",function(){
+		var constraints = [], boxes = [], cells = [],boxConstraints=[];
+        var dist = 1*1+0.3;
+        var world = setupWorld(demo);
+		world.solver.iterations = 30;
+		
+        //world.solver.setSpookParams(1e20,3);
+		boxes.push( addShape({type:'box',world:world,mass:0,x:-5}) );
+		boxes.push( addShape({type:'box',world:world,mass:0,x:5}) );
+		for (var x =-3.5 ; x<4;x=x+0.5){
+			//cells.push( addShape({type:'sphere',world:world,mass:1,size:0.35,x:x,z:1}));
+			cells.push( addShape({type:'sphere',world:world,mass:1,radius:0.3,size:0.3,x:x,z:1}));
+		}
+		// add constraints
+		//world.addConstraint(c = new CANNON.DistanceConstraint(cells[2],cells[3],dist));
+        //consts.push(c);
+		
+		linkCells(world,cells,constraints,function(prev,cur){
+			return new CANNON.LockConstraint(prev,cur);
+		});
+		
+		//world.addConstraint(c = new CANNON.DistanceConstraint(boxes[0],cells[0],1.5));
+		world.addConstraint(c = new CANNON.LockConstraint(boxes[0],cells[0]));
+		//world.addConstraint(c = new CANNON.DistanceConstraint(boxes[1],cells[cells.length-1],1.5));
+		world.addConstraint(c = new CANNON.LockConstraint(boxes[1],cells[cells.length-1]));
+
+		var boxMass = 1000000;
+		addShape({type:'box',world:world,x:2,z:10,  mass:boxMass, size:1.5});
+		addShape({type:'box',world:world,x:-2,z:10,  mass:boxMass, size:1.5});
+		
+		addConstraintRemover(world,constraints,1.0);
+		
+
+		/*addShape({type:'tetra',world:world,x:-0.1});
+		addShape({type:'sphere',world:world,x:2});
+		addShape({type:'sphere',world:world,x:4});
+		addShape({type:'box',world:world,x:6});  */
+	  });
+
+	function linkCells(world,cells,constraints,constraintFunction){
+		  cells.reduce(function(prev,cur,index){
 			if(prev != undefined){
-
-				world.addConstraint(c = new CANNON.DistanceConstraint(prev,cur,dist));
-				constraints.push(c);
-
-				console.log("adding constraint")
-				//world.addConstraint(consts.push(new CANNON.DistanceConstraint(prev,cur,dist)));
+				var c;
+				world.addConstraint(
+					c = constraintFunction(prev,cur)
+					//c = new CANNON.LockConstraint(prev,cur)
+					//c = new CANNON.DistanceConstraint(prev,cur,dist)
+				);
+				constraints.push(c); 
 			}
 			return cur;
-		},undefined);
-		
-		 world.solver.iterations = 30;
-		
-		world.addConstraint(c = new CANNON.DistanceConstraint(boxes[0],cells[0],2));
-		world.addConstraint(c = new CANNON.DistanceConstraint(boxes[1],cells[cells.length-1],2));
-
-		addShape({type:'box',world:world,x:2,z:10,  mass:100, size:1.5});
-		
+		},undefined);	
+	}  
+	  
+	  
+	function addConstraintRemover(world,constraints,limit){
         world.addEventListener('postStep', function(){
           for(var i=constraints.length-1; i>=0; i--){
             // The multiplier is proportional to how much force that is added to the bodies by the constraint.
@@ -66,27 +171,16 @@
             var m = Math.abs(constraints[i].equations[0].multiplier);
 			con = constraints[i].equations[0];
             //console.log(con.computeGq());
-			if(con.computeGq() > 1.2){
+			if(con.computeGq() > limit){ 
+				console.log("removing constraint " + i);
               world.removeConstraint(constraints[i]);
+			  constraints.splice(i,1);
+			  
             }
           }
-        });		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/*addShape({type:'tetra',world:world,x:-0.1});
-		addShape({type:'sphere',world:world,x:2});
-		addShape({type:'sphere',world:world,x:4});
-		addShape({type:'box',world:world,x:6});  */
-	  });
-
-
+        });			
+	
+	};  
 	
 	function createTetra(){
 		var verts = [new CANNON.Vec3(0,0,0),
@@ -116,6 +210,11 @@
 			switch(spec.type){
 				case 'sphere':
 					shape = new CANNON.Sphere(spec.size || 1)
+					break;
+				case 'cylinder':
+					spec.radius = spec.radius || 0.5;
+					spec.size = spec.size || 1;
+					shape = new CANNON.Cylinder (spec.radius, spec.radius,spec.size,20); ///( radiusTop  radiusBottom  height  numSegments )
 					break;
 				case 'box':
 					var halfextents = new CANNON.Vec3(1,1,1);
@@ -200,7 +299,7 @@
         var groundShape = new CANNON.Plane();
         var groundBody = new CANNON.Body({ mass: 0 });
         groundBody.addShape(groundShape);
-        groundBody.position.set(0,0,-15);
+        groundBody.position.set(0,0,0);
         world.addBody(groundBody);
         demo.addVisual(groundBody);
         
