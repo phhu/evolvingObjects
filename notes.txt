@@ -1,0 +1,30 @@
+Limitations:
+
+Strength of joins is the same?
+
+Geometrical structure? How does a 
+
+
+Senses:
+=======
+
+Height (z cordinate)
+Proximity to others (how to measure? How would you know if a plant is available in the neighbouring area?)
+	- make an array of all units then measure those within a certain distance? 
+	- calculate some kind of field for it?
+Strain (how to measure?)
+
+	
+States:
+=======
+(do we need states at all? Is expression of an appetite / signal the same as a state?)
+Energy = food supply
+
+Actions:
+========
+
+- pass on food (express hunger?)
+- Grow / breed / split
+	- which angle / direction?
+- Express strain / (alarm?)
+- express hunger?	
